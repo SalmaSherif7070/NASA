@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, XCircle, Bot, Crown } from 'lucide-react';
+import { Crown } from 'lucide-react';
 import Card from './ui/Card';
 import Section from './ui/Section';
 import { supabase } from '../lib/supabaseClient';
