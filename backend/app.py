@@ -489,4 +489,4 @@ def train_model_endpoint():
 if __name__ == "__main__":
     load_global_artifacts()
     # Run on port 5000 to match frontend expectations
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=False)
