@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, XCircle, Bot, Crown } from 'lucide-react';
+import { Crown } from 'lucide-react';
 import Card from './ui/Card';
 import Section from './ui/Section';
 import { supabase } from '../lib/supabaseClient';
@@ -310,51 +310,10 @@ const HuntPlanetsGame = () => {
 
   const header = useMemo(() => (csvRows.length > 0 ? csvRows[0] : []), [csvRows]);
   const currentRow = useMemo(() => (currentRowIndex > 0 ? csvRows[currentRowIndex] : []), [csvRows, currentRowIndex]);
-  const field = (name: string): string | undefined => {
-    const idx = header.indexOf(name);
-    if (idx === -1 || !currentRow || currentRow.length <= idx) return undefined;
-    return currentRow[idx];
-  };
-
-  const derivedCandidate = useMemo(() => {
-    if (header.length === 0 || currentRow.length === 0) return MOCK_GAME_CANDIDATE;
-    const disposition = (field('disposition') || '').toUpperCase();
-    const isPlanet = disposition === 'CONFIRMED';
-    const pl_orbper = field('pl_orbper');
-    const pl_rade = field('pl_rade');
-    const st_teff = field('st_teff');
-    const st_rad = field('st_rad');
-    const pl_eqt = field('pl_eqt');
-    const imgFromCsv = field('image');
-    const name = field('pl_name') || field('name') || 'Unknown Candidate';
-
-    // Compute image URL: use explicit 'image' column if present, otherwise try name-based file in public/
-    const baseUrl = (import.meta as any).env?.BASE_URL || '/';
-    const toSlug = (s: string) => s.trim().replace(/\s+/g, '_');
-    const guessImage = `${toSlug(name)}.jpg`;
-    const imageUrl = `${baseUrl}${imgFromCsv && imgFromCsv.trim().length ? imgFromCsv.trim() : guessImage}`;
-    const features: { feature: string; importance: number }[] = [];
-    if (pl_orbper) features.push({ feature: `Orbital Period: ${pl_orbper} d`, importance: 0.30 });
-    if (pl_rade) features.push({ feature: `Planet Radius (R⊕): ${pl_rade}`, importance: 0.25 });
-    if (st_teff) features.push({ feature: `Stellar Teff (K): ${st_teff}`, importance: 0.20 });
-    if (st_rad) features.push({ feature: `Stellar Radius (R☉): ${st_rad}`, importance: 0.15 });
-    if (pl_eqt) features.push({ feature: `Equilibrium Temp (K): ${pl_eqt}`, importance: 0.10 });
-    const normalized = features.map((f, i) => ({ ...f, importance: features[i].importance }));
-    return {
-      id: name || 'cand_csv',
-      lightCurveUrl: imageUrl,
-      aiPrediction: {
-        isPlanet,
-        confidence: 0.9,
-        reasoning: normalized,
-      },
-    } as typeof MOCK_GAME_CANDIDATE;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [header, currentRowIndex, csvRows]);
 
   // Build a map of available images in /src/data/Images using Vite's glob.
   // This ensures we use actual served URLs rather than assuming paths.
-  const imageModules = import.meta.glob('/src/data/Images/*.{png,jpg}', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
+  const imageModules = import.meta.glob('/src/data/Images/*.{png,jpg}', { eager: true, as: 'url' }) as Record<string, string>;
   const imageNameToUrl: Record<string, string> = {};
   Object.entries(imageModules).forEach(([path, url]) => {
     const name = path.split('/').pop()!.toLowerCase();
@@ -408,7 +367,7 @@ const HuntPlanetsGame = () => {
     }
 
     setPlanetFeatureImageMap(map);
-  }, [planetData]);
+  }, [planetData, imageNameToUrl]);
 
   // Debug: log mapping so you can see which planets matched images
   useEffect(() => {
