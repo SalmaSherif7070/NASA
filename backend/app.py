@@ -485,6 +485,9 @@ def train_model_endpoint():
         traceback.print_exc()
         return jsonify({"error": f"Training error: {str(e)}"}), 500
 
+@app.route("/")
+def home():
+    return {"status": "ok", "message": "NASA backend is running 🚀"}
 
 if __name__ == "__main__":
     load_global_artifacts()
