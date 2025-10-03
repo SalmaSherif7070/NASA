@@ -5,21 +5,6 @@ import Card from './ui/Card';
 import Section from './ui/Section';
 import { supabase } from '../lib/supabaseClient';
 
-const MOCK_GAME_CANDIDATE = {
-  id: 'cand_001',
-  lightCurveUrl: 'https://placehold.co/600x300/020617/38bdf8?text=Light+Curve+Data',
-  aiPrediction: {
-    isPlanet: true,
-    confidence: 0.92,
-    reasoning: [
-      { feature: 'Transit Depth', importance: 0.45 },
-      { feature: 'Orbital Period', importance: 0.30 },
-      { feature: 'Stellar Radius', importance: 0.15 },
-      { feature: 'Transit Duration', importance: 0.10 },
-    ],
-  }
-};
-
 // Add type for planet data
 type PlanetData = {
   planet_name: string;
@@ -45,8 +30,8 @@ const HuntPlanetsGame = () => {
   const [score, setScore] = useState<number>(0);
   const [username, setUsername] = useState<string>('');
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [csvRows, setCsvRows] = useState<string[][]>([]);
-  const [currentRowIndex, setCurrentRowIndex] = useState<number>(-1);
+  const [, setCsvRows] = useState<string[][]>([]);
+  const [, setCurrentRowIndex] = useState<number>(-1);
   const [saveMessage, setSaveMessage] = useState<string>('');
   const [saveError, setSaveError] = useState<string>('');
   const [saving, setSaving] = useState<boolean>(false);
@@ -307,9 +292,6 @@ const HuntPlanetsGame = () => {
       setShuffledChoices(choices);
     }
   };
-
-  const header = useMemo(() => (csvRows.length > 0 ? csvRows[0] : []), [csvRows]);
-  const currentRow = useMemo(() => (currentRowIndex > 0 ? csvRows[currentRowIndex] : []), [csvRows, currentRowIndex]);
 
   // Build a map of available images in /src/data/Images using Vite's glob.
   // This ensures we use actual served URLs rather than assuming paths.
