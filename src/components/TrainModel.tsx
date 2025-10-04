@@ -79,7 +79,7 @@ const App = () => {
   const [trainingStatus, setTrainingStatus] = useState<string[]>([]);
   const [isTraining, setIsTraining] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [metricsJson, setMetricsJson] = useState<MetricsJson | null>(null);
+  // const [metricsJson, setMetricsJson] = useState<MetricsJson | null>(null);
   // const fileInputRef = useRef<HTMLInputElement>(null); // removed unused variable
 
   // Appends a new message with a timestamp to the training log
